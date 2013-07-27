@@ -34,18 +34,14 @@ namespace DBMaker
         }
 
         //generate json for server
-        class _SeriesJSON
+        class _FolderJSON
         {
             public string Name;
             public string Home;
             public int Count;
         }
 
-        class _SiteJSON
-        {
-            public string SiteName;
-            public int Count;
-        }
+
 
         public class _Copy_From_To
         {
@@ -131,32 +127,39 @@ namespace DBMaker
 
         private void SaveJSON()
         {
-            List<_SiteJSON> lstAllSiteJSON = new List<_SiteJSON>();
+            List<_FolderJSON> lstAllSiteJSON = new List<_FolderJSON>();
+            LogToShowInfoToLabelInThread("正在存储JSON");
             foreach (_Site siteInfo in _compressed_dir_info.siteAll)
             {
-                _SiteJSON siteJSON = new _SiteJSON();
-                siteJSON.SiteName = siteInfo.siteName;
-                siteJSON.Count = siteInfo.seriesInSite.Count;
-                lstAllSiteJSON.Add(siteJSON);
+                LogToShowInfoToLabelInThread("正在处理：" + siteInfo.siteName);
+                _FolderJSON folderSiteJSON = new _FolderJSON();
+                folderSiteJSON.Name = siteInfo.siteName;
+                folderSiteJSON.Count = siteInfo.seriesInSite.Count;
+                folderSiteJSON.Home = siteInfo.seriesInSite[0].picInSeries[0].picMD5;
+                lstAllSiteJSON.Add(folderSiteJSON);
 
-                List<_SeriesJSON> lstSeriesJSON = new List<_SeriesJSON>();
+                List<_FolderJSON> lstSeriesJSON = new List<_FolderJSON>();
                 
-                int nGroup = 1;
+                int nCount = 1;
                 foreach ( _Series seriesInfo in siteInfo.seriesInSite)
                 {
-                    _SeriesJSON seriesJSON = new _SeriesJSON();
+                    _FolderJSON seriesJSON = new _FolderJSON();
                     seriesJSON.Name = seriesInfo.seriesName;
                     seriesJSON.Home = seriesInfo.mainPage.picMD5;
                     seriesJSON.Count = seriesInfo.picInSeries.Count;
                     lstSeriesJSON.Add(seriesJSON);
-                    if ( nGroup%18 == 0 || nGroup == (siteInfo.seriesInSite.Count)) // nGroup - (nGroup%18)
+                    if ( nCount%18 == 0 || nCount == (siteInfo.seriesInSite.Count)) // nGroup - (nGroup%18)
                     {
                         string json_series_in_server = JsonConvert.SerializeObject(lstSeriesJSON);
-                        string saveSeriesToJSONFileInServer = Directory.GetParent(_str_output_dir) + "\\" + siteInfo.siteName + "_" + nGroup.ToString() + ".json";
+                        string saveSeriesToJSONFileInServer = Directory.GetParent(_str_output_dir) + "\\" + siteInfo.siteName + "_" + nCount.ToString() + ".json";
                         File.WriteAllText(saveSeriesToJSONFileInServer, json_series_in_server);
                         lstSeriesJSON.Clear();
                     }
-                    ++nGroup;
+                  
+                    string json_pics_in_server = JsonConvert.SerializeObject(seriesInfo.picInSeries);
+                    string savePicsToJSONFileInServer =  Directory.GetParent(_str_output_dir) + "\\" + siteInfo.siteName + "_" + nCount.ToString() + "_pic.json";
+                    File.WriteAllText(savePicsToJSONFileInServer, json_pics_in_server);
+                    ++nCount;
                 }
            }
             string json_site_all = JsonConvert.SerializeObject(_compressed_dir_info);
