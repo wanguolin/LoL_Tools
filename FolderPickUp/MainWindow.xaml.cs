@@ -123,7 +123,7 @@ namespace Generator
                 }
                 catch (System.Exception ex)
                 {
-                    InsNewLineIntoTextBoxInThread(singleFile, "该文件删除失败。");
+                    InsNewLineIntoTextBoxInThread(singleFile, "该文件删除失败。" + ex.Message);
                 }
             }
             InsNewLineIntoTextBoxInThread("总计：", _to_be_deleted.Count.ToString());
@@ -242,7 +242,7 @@ namespace Generator
                 }
                 catch (System.Exception ex)
                 {
-                    InsNewLineIntoTextBoxInThread(singleFile, "解析图片格式异常。");                	
+                    InsNewLineIntoTextBoxInThread(singleFile, "解析图片格式异常。" + ex.Message);                	
                 }
                 RefreshProgressInThread( ++cntProgress);
             }
@@ -264,13 +264,8 @@ namespace Generator
             foreach (string strPath in Directory.GetDirectories(strFromPath))
             {
                 if (nDepth == 0)
-                {
-                     foreach ( string strFileName in Directory.GetFiles(strPath))
-                    {
+                    foreach (string strFileName in Directory.GetFiles(strPath))
                         _list_to_be_pick.Add(strFileName);
-                        //InsNewLineIntoTextBoxInThread(strFileName, "将会被移动");
-                    }
-                }
                 else
                     GetDirListFromDepth(strPath, --nDepth);
             }
@@ -295,7 +290,9 @@ namespace Generator
                 }
                 while (reversePrefix.Count != 0)
                 {
-                    strParentPrefix += reversePrefix.Pop() + "_";                    
+                    strParentPrefix += reversePrefix.Pop() + "_";
+                    if (chkLastName.IsChecked == true)
+                        break;
                 }
                 string strMoveTo = strFullName + "\\" + strParentPrefix + "_" + dir.Name;
                 _list_pick_to.Add(strMoveTo);
@@ -341,9 +338,11 @@ namespace Generator
 
         private void btnStartToLog_Click(object sender, RoutedEventArgs e)
         {
+            chkLastName.IsEnabled = false;
             Thread thread = new Thread(new ThreadStart(PickAction));
             thread.IsBackground = true;
             thread.Start();
+            chkLastName.IsEnabled = true;
         }
 
         private void PickAction()

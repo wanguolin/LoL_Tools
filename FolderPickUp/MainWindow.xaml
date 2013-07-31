@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Generator.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="LoL批量处理工具" Height="600" Width="800" MaxWidth="1024"  MaxHeight="768"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SizeToContent="WidthAndHeight">
+        Title="LoL批量处理工具" Height="768" Width="1024" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     
     <DockPanel Margin="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LastChildFill="True">
         <DockPanel DockPanel.Dock="Bottom">
@@ -51,6 +51,7 @@
                     </ComboBox.Style>
                 </ComboBox>
                 <Button Name="btnStartPickToLog" Content="输出待提取的目录和提取后的位置" IsEnabled="False" Click="btnStartPickToLog_Click"></Button>
+                <CheckBox Name="chkLastName" Content="仅按照他们父一级目录命名"></CheckBox>
                 <Button Name="btnStartPick" Content="开始提取" IsEnabled="False" Click="btnStartToLog_Click"></Button>
 
 
