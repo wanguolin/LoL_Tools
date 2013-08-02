@@ -26,8 +26,13 @@ namespace DBMaker
     /// </summary>
     public partial class MainWindow : Window
     {
-        string _str_compressed_dir = "";
-        string _str_output_dir = "";
+        const string _path_compressed_ready = "已压缩";
+        const string _path_name_upload      = "待上传";
+        static string _str_compressed_dir          = System.Windows.Forms.Application.StartupPath + "\\" + _path_compressed_ready;
+        static string _str_output_dir              = System.Windows.Forms.Application.StartupPath + "\\" + _path_name_upload;
+        static string _json_path_upload = _str_output_dir + "\\json_upload";
+        static string _pic_upload_path = _str_output_dir + "\\pic_upload";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -84,27 +89,7 @@ namespace DBMaker
         Dictionary<string,string> _existing_output_md5_from_db = new Dictionary<string,string>();
         Dictionary<string, string> _file_need_to_copy = new Dictionary<string, string>();
         Dictionary<string,string> _all_md5_rst_checking_duplicated = new Dictionary<string,string>();
-        
-        private void btnSelectCompressedPath_Click(object sender, RoutedEventArgs e)
-        {
-               FolderBrowserDialog diagFolder = new FolderBrowserDialog();
-               if (diagFolder.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                   _str_compressed_dir = txtBoxSelectCompressedPath.Text = diagFolder.SelectedPath;
-               btnSelectOutputPath.IsEnabled = true;
-        }
-
-        private void btnSelectOutputPath_Click(object sender, RoutedEventArgs e)
-        {
-            FolderBrowserDialog diagFolder = new FolderBrowserDialog();
-            if (diagFolder.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                _str_output_dir = txtBoxSelectOutputPath.Text = diagFolder.SelectedPath;
-                Thread thread = new Thread(new ThreadStart(CrossChecking));
-                thread.IsBackground = true;
-                thread.Start();
-            }
-        }
-
+    
         private void CrossChecking()
         {
             LogToShowInfoToLabelInThread("正在扫描现有的文件。");
@@ -127,6 +112,9 @@ namespace DBMaker
 
         private void SaveJSON()
         {
+            if (!Directory.Exists(_json_path_upload))
+                Directory.CreateDirectory(_json_path_upload);
+
             List<_FolderJSON> lstAllSiteJSON = new List<_FolderJSON>();
             LogToShowInfoToLabelInThread("正在存储JSON");
             foreach (_Site siteInfo in _compressed_dir_info.siteAll)
@@ -151,22 +139,22 @@ namespace DBMaker
                     if ( nCount%18 == 0 || nCount == (siteInfo.seriesInSite.Count)) // nGroup - (nGroup%18)
                     {
                         string json_series_in_server = JsonConvert.SerializeObject(lstSeriesJSON);
-                        string saveSeriesToJSONFileInServer = Directory.GetParent(_str_output_dir) + "\\" + siteInfo.siteName + "_" + nCount.ToString() + ".json";
+                        string saveSeriesToJSONFileInServer = _str_output_dir + "\\" + siteInfo.siteName + "_" + nCount.ToString() + ".json";
                         File.WriteAllText(saveSeriesToJSONFileInServer, json_series_in_server);
                         lstSeriesJSON.Clear();
                     }
                   
                     string json_pics_in_server = JsonConvert.SerializeObject(seriesInfo.picInSeries);
-                    string savePicsToJSONFileInServer =  Directory.GetParent(_str_output_dir) + "\\" + siteInfo.siteName + "_" + nCount.ToString() + "_pic.json";
+                    string savePicsToJSONFileInServer = _json_path_upload + "\\" + siteInfo.siteName + "_" + nCount.ToString() + "_pic.json";
                     File.WriteAllText(savePicsToJSONFileInServer, json_pics_in_server);
                     ++nCount;
                 }
            }
             string json_site_all = JsonConvert.SerializeObject(_compressed_dir_info);
-            File.WriteAllText(Directory.GetParent(_str_output_dir) + "\\" + "ori_json_data.json", json_site_all);
+            File.WriteAllText(_json_path_upload + "\\" + "ori_json_data.json", json_site_all);
 
             string json_site_in_server = JsonConvert.SerializeObject(lstAllSiteJSON);
-            File.WriteAllText(Directory.GetParent(_str_output_dir) + "\\" + "all_site.json", json_site_in_server);
+            File.WriteAllText(_json_path_upload + "\\" + "all_site.json", json_site_in_server);
 
             LogToShowInfoToLabelInThread("json已经生成。");
         }
@@ -197,12 +185,12 @@ namespace DBMaker
         {
             try
             {
-                string strJSON = File.ReadAllText(Directory.GetParent(_str_output_dir) + "\\current.json");
+                string strJSON = File.ReadAllText(_json_path_upload + "\\ori_json_data.json");
                 _current_json_file = JsonConvert.DeserializeObject<DB_JSON>(strJSON);
             }
             catch (System.Exception ex)
             {
-                LogToDelTextBoxInThread("加载:Current.JSON出错，请检查" + _str_output_dir);
+                LogToDelTextBoxInThread("加载:Current.JSON出错，请检查" + _str_output_dir + ex.ToString());
             }
         }
 
@@ -234,7 +222,7 @@ namespace DBMaker
 
         private void ScanCompressedFolder()
         {
-            LogToShowInfoToLabelInThread("正在扫描以压缩好的路径,生成数据结构。");
+            LogToShowInfoToLabelInThread("正在扫描已压缩好的路径,生成数据结构。");
 
             foreach (string SiteFullPath in Directory.GetDirectories(_str_compressed_dir))
             {
@@ -258,7 +246,13 @@ namespace DBMaker
 
         }
 
-     
+        private void Window_Loaded(object sender, EventArgs e)
+        {
+            Thread thread = new Thread(new ThreadStart(CrossChecking));
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
         private void ScanOutputExistingFile()
         {
             LogToShowInfoToLabelInThread("正在扫描输出路径中已经存在的文件.");
@@ -295,6 +289,7 @@ namespace DBMaker
 
         private void btnIns_Click(object sender, RoutedEventArgs e)
         {
+         
             Thread thread = new Thread(new ThreadStart(DoCopy));
             thread.IsBackground = true;
             thread.Start();
@@ -307,6 +302,10 @@ namespace DBMaker
             int nCurProgress = 0;
             SetProgressMaxInThread(_all_md5_rst_checking_duplicated.Count());
             IDictionaryEnumerator itAllCopy= _all_md5_rst_checking_duplicated.GetEnumerator();
+
+            if (!Directory.Exists(_pic_upload_path))
+                Directory.CreateDirectory(_pic_upload_path);
+
             while(itAllCopy.MoveNext()){
                 if (_existing_output_md5_files.Contains(itAllCopy.Key.ToString()))
                     LogToInsTextBoxInThread(itAllCopy.Key.ToString() + "已存在，不拷贝。");

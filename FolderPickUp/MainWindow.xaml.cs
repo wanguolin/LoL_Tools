@@ -44,7 +44,7 @@ namespace Generator
         long _compress_quality = 0;
 
 
-        List<string> _all_pic_list = new List<string>();
+        List<string> _all_image_to_be_check = new List<string>();
         List<string> _to_be_deleted = new List<string>();
         List<string> _list_to_be_pick = new List<string>();
         List<string> _list_pick_to = new List<string>();
@@ -60,7 +60,7 @@ namespace Generator
            _n_pick_depth = -1;
            _n_depth_from_picked = 0;
 
-           _all_pic_list.Clear();
+           _all_image_to_be_check.Clear();
            _to_be_deleted.Clear();
            _list_to_be_pick.Clear();
            _list_pick_to.Clear();
@@ -85,11 +85,10 @@ namespace Generator
                 return;
             }
             Init();
-            btnStart.IsEnabled = false;
+         
             StartByPath(_str_start_path);
-            btnStart.IsEnabled = true;
-            //test();
         }
+        
         private void btnClearLog_Click(object sender, RoutedEventArgs e)
         {
             txtboxLog.Clear();
@@ -97,7 +96,7 @@ namespace Generator
 
         private void StartByPath( string strPath)
         {
-        
+           
             Thread thread = new Thread(new ThreadStart(_ThreadGetPicStructure));
             thread.IsBackground = true;
             thread.Start();
@@ -114,6 +113,7 @@ namespace Generator
 
         private void _ThreadMoveAllToBe()
         {
+
             DirectoryInfo dirToBeMove = new DirectoryInfo(_str_start_path);
             
             string strMoveTo = dirToBeMove.Parent.FullName + "\\" + dirToBeMove.Name + "_to_be_del\\";
@@ -188,6 +188,10 @@ namespace Generator
         private void _ThreadGetPicStructure() 
         {
             _to_be_deleted.Clear();
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                btnStartCheck.IsEnabled = false;
+            }));
             bool blnIsRightDepth = true;
             //blnIsRightDepth |= ChkIsRightDepth(_str_start_path, false);
           
@@ -211,23 +215,22 @@ namespace Generator
                         }
                         else
                         {
-                            _all_pic_list.Add(strPic);
+                            _all_image_to_be_check.Add(strPic);
                         }
                     }
                 }
             }
             InsNewLineIntoTextBoxInThread(_str_start_path,  blnIsRightDepth ? "分类信息初始化完毕。" : "仍然存在分类不正确的地方，请检查！");
-         
+
             if (blnIsRightDepth== false)
                 return;
-
+            
             CheckImage();
 
             if (_to_be_deleted.Count != 0)
                 this.Dispatcher.Invoke(new Action(() =>
                 {
-                    btnMove.IsEnabled = true;
-                    btnCompress.IsEnabled = true;
+                    btnStartCheck.IsEnabled = btnMove.IsEnabled = btnCompress.IsEnabled = true;
                 }));
 
         }
@@ -237,9 +240,9 @@ namespace Generator
         private void CheckImage()
         {
             int cntProgress = 0;
-            InitProgressInThread(_all_pic_list.Count, 0);
+            InitProgressInThread(_all_image_to_be_check.Count, 0);
 
-            foreach ( string singleFile in _all_pic_list)
+            foreach ( string singleFile in _all_image_to_be_check)
             {
                 try
                 {
@@ -255,12 +258,12 @@ namespace Generator
                 catch (System.Exception ex)
                 {
                     InsNewLineIntoTextBoxInThread(singleFile, "解析图片格式异常。" + ex.Message);
-                    _all_pic_list.Remove(singleFile);
+                    _to_be_deleted.Add(singleFile);
                 }
                 RefreshProgressInThread(++cntProgress);
             }
 
-            InsNewLineIntoTextBoxInThread("检查了：", _all_pic_list.Count.ToString() + "个图片的大小和格式.");
+            InsNewLineIntoTextBoxInThread("检查了：", _all_image_to_be_check.Count.ToString() + "个图片的大小和格式.");
         }
 
         private void PickDir()
@@ -417,42 +420,50 @@ namespace Generator
             thread.IsBackground = true;
             thread.Start();
 
-
-
         }
 
         
         private void CompressFile()
         {
+            long lCompressSourceSize, lCompressDestinateSize = lCompressSourceSize = 0;
             InitProgressInThread(_list_to_be_compressed.Count, 0);
+            RefreshProgressInThread(0);
             int i = 0;
+
+            InsNewLineIntoTextBoxInThread("","开始压缩");
             foreach (string fileToBeCompressed in _list_to_be_compressed)
             {
-                string fileCompressedTo = fileToBeCompressed.Replace("已整理", "已压缩");
-                if (!Directory.GetParent(fileCompressedTo).Exists)
-                    Directory.GetParent(fileCompressedTo).Create();
-                // Get a bitmap.
-                Bitmap bmp1 = new Bitmap(fileToBeCompressed);
-                ImageCodecInfo jgpEncoder = GetEncoder(ImageFormat.Jpeg);
+                string fileCompressedToFullPath = fileToBeCompressed.Replace("已整理", "已压缩");
+                string strCompressToPath = Directory.GetParent(fileCompressedToFullPath).FullName;
+                if (!Directory.Exists(strCompressToPath))
+                    Directory.CreateDirectory(strCompressToPath);
+                FileInfo fiOriFile = new FileInfo(fileToBeCompressed);
+                fileCompressedToFullPath = strCompressToPath + "\\" + fiOriFile.Name + "_" + _compress_quality.ToString() + "_compressed" + fiOriFile.Extension;
+                try
+                {
+                    Bitmap bmpCompress = new Bitmap(fileToBeCompressed);
+                    ImageCodecInfo jgpEncoder = GetEncoder(ImageFormat.Jpeg);
 
-                // Create an Encoder object based on the GUID 
-                // for the Quality parameter category.
-                System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
+                    System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
 
-                // Create an EncoderParameters object. 
-                // An EncoderParameters object has an array of EncoderParameter 
-                // objects. In this case, there is only one 
-                // EncoderParameter object in the array.
-                EncoderParameters myEncoderParameters = new EncoderParameters(1);
+                    EncoderParameters myEncoderParameters = new EncoderParameters(1);
+                    EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, _compress_quality);
+                    myEncoderParameters.Param[0] = myEncoderParameter;
+                    bmpCompress.Save(fileCompressedToFullPath, jgpEncoder, myEncoderParameters);
 
-                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, _compress_quality);
-                myEncoderParameters.Param[0] = myEncoderParameter;
-                bmp1.Save(fileCompressedTo, jgpEncoder, myEncoderParameters);
+                    FileInfo fCompressSourceInfo = new FileInfo(fileToBeCompressed);
+                    lCompressSourceSize += fCompressSourceInfo.Length;
 
+                    FileInfo fCompressDestinateInfo = new FileInfo(fileCompressedToFullPath);
+                    lCompressDestinateSize += fCompressDestinateInfo.Length;
+                }
+                catch (System.Exception ex)
+                {
+                    InsNewLineIntoTextBoxInThread("压缩文件时出现异常，请检查：", fileToBeCompressed + " 异常信息：" + ex.Message);
+                }
                 RefreshProgressInThread(++i);
             }
-     
-
+            InsNewLineIntoTextBoxInThread("压缩完成：", ((lCompressSourceSize / 1024) / 1024).ToString() + "MB => " + ((lCompressDestinateSize / 1024) / 1024).ToString() + "MB");
         }
 
         private void CreateFolderIfNotExist(string chkFullPath)

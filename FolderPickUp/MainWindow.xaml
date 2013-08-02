@@ -61,16 +61,16 @@
                 <ComboBox Name="selectPath" Text="请选择要检查的目录" Width="145"  IsReadOnly="True" IsEditable="true"></ComboBox>
                 <!--" Button Content="设置目录"   DockPanel.Dock="Left" MaxHeight="20" Name="btnInsertDirList" Click="btnInsertDirList_Click" Margin="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" /-->
                 <Button Content="清除日志" DockPanel.Dock="Left" MaxHeight="20" Margin="1" Name="btnClearLog"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="btnClearLog_Click" />
-                <Button Content="开始检查" DockPanel.Dock="Left" MaxHeight="20" Margin="1" Name="btnStart" Click="btnStartCheck_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <Button Content="开始检查" DockPanel.Dock="Left" MaxHeight="20" Margin="1" Name="btnStartCheck" Click="btnStartCheck_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 <Button Content="移除文件" DockPanel.Dock="Left" MaxHeight="20" Margin="1" Name="btnMove" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="False" Click="btnMove_Click" />
                
-                <ComboBox Name="selectQuality" Text="请选择压缩比" MinWidth="75"  IsReadOnly="True" IsEditable="true" SelectionChanged="selectQuality_SelectionChanged"></ComboBox>
+                <ComboBox Name="selectQuality" Text="请选择压缩比" Width="80"  IsReadOnly="True" IsEditable="true" SelectionChanged="selectQuality_SelectionChanged"></ComboBox>
                 <Button Content="开始压缩" Name="btnCompress" IsEnabled="False" Click="btnCompress_Click" ></Button>
                 <ProgressBar  Margin="1" MinHeight="20" MaxHeight="20" HorizontalAlignment="Stretch" Name="progressBar" DockPanel.Dock="Right"/>
             </DockPanel>
         </DockPanel>
 
-          <TextBox Margin="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" MinHeight="700"  Name="txtboxLog" DockPanel.Dock="Top"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+          <TextBox Margin="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" Height="700"  Width="1024"  Name="txtboxLog" DockPanel.Dock="Top"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
 
     </DockPanel>            
