@@ -29,10 +29,10 @@ namespace Generator
     /// </summary>
     public partial class MainWindow : Window
     {
-        const string _path_name_ready =  "已整理";
-        const string _path_name_compressed = "已压缩";
-        string _path_name_full_ready = System.Windows.Forms.Application.StartupPath + "\\" + _path_name_ready;
-        string _path_name_full_compressed = System.Windows.Forms.Application.StartupPath + "\\" + _path_name_compressed;
+        const string _path_fix_ready =  "已整理";
+        const string _path_fix_compressed = "已压缩";
+        string _path_name_full_ready = System.Windows.Forms.Application.StartupPath + "\\" + _path_fix_ready;
+        string _path_name_full_compressed = System.Windows.Forms.Application.StartupPath + "\\" + _path_fix_compressed;
 
         string _str_start_path = "";
         string _str_dir_pick_from = "";
@@ -252,8 +252,11 @@ namespace Generator
                         InsNewLineIntoTextBoxInThread(singleFile, "因为过小而疑似广告。");
                         _to_be_deleted.Add(singleFile);
                     }
+                    else
+                    {
+                        _list_to_be_compressed.Add(singleFile);
+                    }
                     imageDraw.Dispose();
-                    _list_to_be_compressed.Add(singleFile);
                 }
                 catch (System.Exception ex)
                 {
@@ -408,12 +411,8 @@ namespace Generator
             }
 
             _str_dir_compress_to = _path_name_full_compressed + "\\" + selectPath.SelectedItem.ToString();
-            if (Directory.Exists(_str_dir_compress_to))
-            {
-                txtboxLog.AppendText(_str_dir_compress_to + "已经存在了，请检查是否已经压缩过");
-                return;
-            }
-            Directory.CreateDirectory(_str_dir_compress_to);
+            if (!Directory.Exists(_str_dir_compress_to))
+                Directory.CreateDirectory(_str_dir_compress_to);
             _compress_quality = Convert.ToInt64(selectQuality.SelectedItem.ToString());
 
             Thread thread = new Thread(new ThreadStart(CompressFile));
@@ -425,6 +424,12 @@ namespace Generator
         
         private void CompressFile()
         {
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                btnStartPick.IsEnabled = false;
+                btnCompress.IsEnabled = false;
+            }));
+
             long lCompressSourceSize, lCompressDestinateSize = lCompressSourceSize = 0;
             InitProgressInThread(_list_to_be_compressed.Count, 0);
             RefreshProgressInThread(0);
@@ -438,7 +443,9 @@ namespace Generator
                 if (!Directory.Exists(strCompressToPath))
                     Directory.CreateDirectory(strCompressToPath);
                 FileInfo fiOriFile = new FileInfo(fileToBeCompressed);
-                fileCompressedToFullPath = strCompressToPath + "\\" + fiOriFile.Name + "_" + _compress_quality.ToString() + "_compressed" + fiOriFile.Extension;
+                string extOriFile = fiOriFile.Extension;
+                fileCompressedToFullPath =
+                    strCompressToPath + "\\" + fiOriFile.Name.Trim(extOriFile.ToCharArray()) + "_" + _compress_quality.ToString() + "_compressed" + extOriFile;
                 try
                 {
                     Bitmap bmpCompress = new Bitmap(fileToBeCompressed);
@@ -464,6 +471,11 @@ namespace Generator
                 RefreshProgressInThread(++i);
             }
             InsNewLineIntoTextBoxInThread("压缩完成：", ((lCompressSourceSize / 1024) / 1024).ToString() + "MB => " + ((lCompressDestinateSize / 1024) / 1024).ToString() + "MB");
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                btnStartPick.IsEnabled = false;
+                btnCompress.IsEnabled = false;
+            }));
         }
 
         private void CreateFolderIfNotExist(string chkFullPath)

@@ -26,10 +26,10 @@ namespace DBMaker
     /// </summary>
     public partial class MainWindow : Window
     {
-        const string _path_compressed_ready = "已压缩";
-        const string _path_name_upload      = "待上传";
-        static string _str_compressed_dir          = System.Windows.Forms.Application.StartupPath + "\\" + _path_compressed_ready;
-        static string _str_output_dir              = System.Windows.Forms.Application.StartupPath + "\\" + _path_name_upload;
+        const string _path_fix_compressed_ready = "已压缩";
+        const string _path_fix_name_upload      = "待上传";
+        static string _str_compressed_dir          = System.Windows.Forms.Application.StartupPath + "\\" + _path_fix_compressed_ready;
+        static string _str_output_dir              = System.Windows.Forms.Application.StartupPath + "\\" + _path_fix_name_upload;
         static string _json_path_upload = _str_output_dir + "\\json_upload";
         static string _pic_upload_path = _str_output_dir + "\\pic_upload";
 
@@ -139,7 +139,7 @@ namespace DBMaker
                     if ( nCount%18 == 0 || nCount == (siteInfo.seriesInSite.Count)) // nGroup - (nGroup%18)
                     {
                         string json_series_in_server = JsonConvert.SerializeObject(lstSeriesJSON);
-                        string saveSeriesToJSONFileInServer = _str_output_dir + "\\" + siteInfo.siteName + "_" + nCount.ToString() + ".json";
+                        string saveSeriesToJSONFileInServer = _json_path_upload + "\\" + siteInfo.siteName + "_" + nCount.ToString() + ".json";
                         File.WriteAllText(saveSeriesToJSONFileInServer, json_series_in_server);
                         lstSeriesJSON.Clear();
                     }
@@ -177,8 +177,11 @@ namespace DBMaker
 
         private void ScanExsitingOutputFile()
         {
-            foreach (string strFileName in Directory.GetFiles(_str_output_dir))
-                _existing_output_md5_files.Add(strFileName);
+            foreach (string strFileName in Directory.GetFiles(_pic_upload_path))
+            {
+                FileInfo fi = new FileInfo(strFileName);
+                _existing_output_md5_files.Add(fi.Name);
+            }
         }
 
         private void LoadCurrentJSON()
@@ -310,7 +313,7 @@ namespace DBMaker
                 if (_existing_output_md5_files.Contains(itAllCopy.Key.ToString()))
                     LogToInsTextBoxInThread(itAllCopy.Key.ToString() + "已存在，不拷贝。");
                 else
-                    File.Copy(itAllCopy.Value.ToString(), _str_output_dir + "\\" + itAllCopy.Key.ToString());
+                    File.Copy(itAllCopy.Value.ToString(), _pic_upload_path + "\\" + itAllCopy.Key.ToString());
                 SetProgressCurrentInThread(++nCurProgress);
             }
             this.Dispatcher.Invoke(new Action(() => { btnIns.IsEnabled = true; }));

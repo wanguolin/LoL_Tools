@@ -5,6 +5,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBMaker", "DBMaker\DBMaker.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderPickUp", "FolderPickUp\FolderPickUp.csproj", "{28AEEE7E-86E7-49B2-9F57-1595E7302878}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QiniuUploader", "QiniuUploader\QiniuUploader.csproj", "{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{51F7083C-1815-4E6A-9836-E2D6D1E95524}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QBox", "External\csharp-sdk-2.4.0\QBox\QBox.csproj", "{1C8C9909-57ED-44E4-81A5-0904E96FA00E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,8 +41,31 @@ Global
 		{28AEEE7E-86E7-49B2-9F57-1595E7302878}.Release|Mixed Platforms.Build.0 = Release|x86
 		{28AEEE7E-86E7-49B2-9F57-1595E7302878}.Release|x86.ActiveCfg = Release|x86
 		{28AEEE7E-86E7-49B2-9F57-1595E7302878}.Release|x86.Build.0 = Release|x86
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8B9FEF2B-F1CB-44F7-A79A-5AF25A7D8564}.Release|x86.ActiveCfg = Release|Any CPU
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Debug|x86.ActiveCfg = Debug|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Debug|x86.Build.0 = Debug|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Release|Any CPU.ActiveCfg = Release|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Release|Mixed Platforms.Build.0 = Release|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Release|x86.ActiveCfg = Release|x86
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1C8C9909-57ED-44E4-81A5-0904E96FA00E} = {51F7083C-1815-4E6A-9836-E2D6D1E95524}
 	EndGlobalSection
 EndGlobal
