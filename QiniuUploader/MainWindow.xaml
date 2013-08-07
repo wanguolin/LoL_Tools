@@ -5,7 +5,7 @@
     <Grid>
         <DockPanel>
             <DockPanel DockPanel.Dock="Top">
-                <DockPanel DockPanel.Dock="Left">
+                <DockPanel DockPanel.Dock="top">
                     <Button Name="btnUploadPic" Width="100"  Content="上传图片" Click="btnUploadPic_Click"  DockPanel.Dock="Left"> </Button>
                     <Button Name="btnUploadDB" Width="100"  Content="上传数据" Click="btnUploadDB_Click"  DockPanel.Dock="Left"></Button>
                     <Button Name="btnDeletePic" Width="100"  Content="删除图片" Click="btnDeletePic_Click" DockPanel.Dock="Left"></Button>
@@ -13,10 +13,13 @@
                     <ComboBox Name="selectThreadNum" IsReadOnly="True" HorizontalAlignment="Stretch" Loaded="selectThreadNum_Loaded"  IsEditable="True" Text="请选择线程数" DockPanel.Dock="Left" SelectionChanged="selectThreadNum_Changed"></ComboBox>
 
                 </DockPanel>
+                <DockPanel DockPanel.Dock="Bottom">
+                    <ProgressBar Name="progressBar" Height="23" ></ProgressBar>
+                </DockPanel>
             </DockPanel>
             <DockPanel DockPanel.Dock="Bottom">
             <DockPanel DockPanel.Dock="Bottom">
-                    <TextBox Name="txtLog"></TextBox>
+                    <TextBox Name="txtLog" VerticalScrollBarVisibility="Auto"></TextBox>
                 </DockPanel>     
             </DockPanel>
         </DockPanel>
