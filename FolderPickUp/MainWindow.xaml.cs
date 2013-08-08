@@ -43,6 +43,7 @@ namespace Generator
         int _n_depth_from_picked = 0;
         long _compress_quality = 0;
 
+        bool _is_chk_name_as_1st = false;
 
         List<string> _all_image_to_be_check = new List<string>();
         List<string> _to_be_deleted = new List<string>();
@@ -310,7 +311,7 @@ namespace Generator
                 while (reversePrefix.Count != 0)
                 {
                     strParentPrefix += reversePrefix.Pop() + "_";
-                    if (chkLastName.IsChecked == true)
+                    if (_is_chk_name_as_1st == true)
                         break;
                 }
                 string strMoveTo = strFullName + "\\" + strParentPrefix + "_" + dir.Name;
@@ -502,6 +503,16 @@ namespace Generator
         private void selectQuality_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             btnCompress.IsEnabled = true;
+        }
+
+        private void txtboxLog_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void chkLastName_Click(object sender, RoutedEventArgs e)
+        {
+            _is_chk_name_as_1st = (chkLastName.IsChecked) == true ? true : false;
         }
     
     }

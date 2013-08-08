@@ -51,7 +51,7 @@
                     </ComboBox.Style>
                 </ComboBox>
                 <Button Name="btnStartPickToLog" Content="输出待提取的目录和提取后的位置" IsEnabled="False" Click="btnStartPickToLog_Click"></Button>
-                <CheckBox Name="chkLastName" Content="仅按照他们父一级目录命名"></CheckBox>
+                <CheckBox Name="chkLastName" Content="仅按照他们父一级目录命名" Click="chkLastName_Click" ></CheckBox>
                 <Button Name="btnStartPick" Content="开始提取" IsEnabled="False" Click="btnStartToLog_Click"></Button>
 
 
@@ -70,7 +70,7 @@
             </DockPanel>
         </DockPanel>
 
-          <TextBox Margin="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" Height="700"  Width="1024"  Name="txtboxLog" DockPanel.Dock="Top"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+          <TextBox Margin="1" VerticalScrollBarVisibility="Auto" MaxHeight="500" MaxWidth="1024" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap"  Name="txtboxLog" DockPanel.Dock="Top"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextChanged="txtboxLog_TextChanged"/>
 
 
     </DockPanel>            
