@@ -1,0 +1,32 @@
+﻿<Window x:Class="SeriesCopy.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="600" Width="600" Initialized="Window_Initialized">
+    <Grid>
+        <DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <Label Name="labFromDir" Content="&lt;请选择 套图库的来源>" DockPanel.Dock="top" MouseDown="labFromDir_MouseDown" ></Label>
+                <ComboBox Name="selectPath" Text=" 请选择要整理到的套图库 "  SelectionChanged="selectPath_changed"  IsReadOnly="True" IsEditable="true" DockPanel.Dock="Left" Drop="selectPath_Drop" DropDownOpened="selectPath_DropDownOpened"></ComboBox>
+               
+                <ComboBox Name="selectQuality" Text="请选择压缩比" IsReadOnly="True" IsEditable="true" DockPanel.Dock="Right" SelectionChanged="selectQuality_SelectionChanged"></ComboBox>
+                <ComboBox Name="selectOutputType" Text="请选择要输出的文件类型"   IsReadOnly="True" IsEditable="true" DockPanel.Dock="Right" SelectionChanged="selectOutputType_SelectionChanged"></ComboBox>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <DockPanel DockPanel.Dock="Top">
+                    <Button Name="btnClearLog" Content="清除日志" DockPanel.Dock="Left" HorizontalAlignment="Stretch"  MinWidth="200" Click="btnClearLog_Click"></Button>
+                    <Button Name="btnStartScan" Content="开始扫描" MinWidth="200"  HorizontalAlignment="Stretch" Click="btnStartScan_Click" DockPanel.Dock="Left"></Button>
+                    <Button Name="btnStartCopy" Content="开始处理" IsEnabled="False"  MinWidth="200" HorizontalAlignment="Stretch" Click="btnStartCopy_Click" DockPanel.Dock="Right"></Button>
+                    
+                </DockPanel>
+              
+                <ProgressBar Name="progressBar" Height="23"></ProgressBar>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Bottom">
+                <TextBox Name="txtLog"></TextBox>
+            </DockPanel>
+            </DockPanel>
+            
+       
+        
+    </Grid>
+</Window>
