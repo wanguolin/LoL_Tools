@@ -22,7 +22,7 @@
                 <ProgressBar Name="progressBar" Height="23"></ProgressBar>
             </DockPanel>
             <DockPanel DockPanel.Dock="Bottom">
-                <TextBox Name="txtLog"></TextBox>
+                <TextBox Name="txtLog" VerticalScrollBarVisibility="Auto"></TextBox>
             </DockPanel>
             </DockPanel>
             

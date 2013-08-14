@@ -16,7 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Noesis.Drawing.Imaging.WebP;
+using ImageMagick;
 
 namespace SeriesCopy
 {
@@ -35,7 +35,7 @@ namespace SeriesCopy
         string _str_path_to = "";//_str_app_base_path + "\\" + _str_organized_name;
         string _str_site_name = "";
         string _output_type = "";
-        long _compress_qualiry = 0;
+        int _compress_qualiry = 0;
 
         HashSet<string> _set_log_in_dest_dir = new HashSet<string>();
         List<string> _lst_all_path_from = new List<string>();
@@ -49,6 +49,7 @@ namespace SeriesCopy
         private void labFromDir_MouseDown(object sender, MouseButtonEventArgs e)
         {
             FolderBrowserDialog diagFolder = new FolderBrowserDialog();
+            diagFolder.SelectedPath = _str_app_base_path;
             if (diagFolder.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 labFromDir.Content = _str_path_from = diagFolder.SelectedPath;
             
@@ -87,6 +88,11 @@ namespace SeriesCopy
             this.Dispatcher.Invoke(new Action(() => { txtLog.AppendText(l + "\n"); }));
         }
 
+        private void ShowTheLastLog()
+        {
+            this.Dispatcher.Invoke(new Action(() => { txtLog.ScrollToEnd(); }));
+        }
+
         private void StartScan(string strDirName)
         {
             AppendLog("开始扫描目录");
@@ -98,6 +104,7 @@ namespace SeriesCopy
             foreach (string l in _lst_all_path_from)
                 AppendLog(l + " => " +_lst_all_path_to[i++]);
             AppendLog("一共有:" + _lst_all_path_from.Count.ToString() + "个目录待整理");
+            ShowTheLastLog();
         }
 
         private void ConvertSrcDirToDest()
@@ -144,13 +151,19 @@ namespace SeriesCopy
                                 File.Copy(strFileName, _lst_all_path_to[i] + "\\" + di.Name);
                             }
                             else {
-                                using (System.Drawing.Image image = System.Drawing.Image.FromFile(strFileName))
+                                using (MagickImage image = new MagickImage(strFileName))
                                 {
-                                    Bitmap bitmap = new Bitmap(image);
-                                    WebPFormat.SaveToFile(_lst_all_path_to[i] + "\\" + di.Name.Replace(di.Extension, ".webp"), bitmap);
-                                    bitmap.Dispose();
-                                    
+                                    image.Quality = _compress_qualiry;
+                                    image.Write(_lst_all_path_to[i] + "\\" + di.Name.Replace(di.Extension, ".webp"));
                                 }
+
+//                                 using (System.Drawing.Image image = System.Drawing.Image.FromFile(strFileName))
+//                                 {
+//                                     Bitmap bitmap = new Bitmap(image);
+//                                     WebPFormat.SaveToFile(_lst_all_path_to[i] + "\\" + di.Name.Replace(di.Extension, ".webp"), bitmap);
+//                                     bitmap.Dispose();
+//                                     
+//                                 }
                             }
                            
                             nPicCount++;
@@ -304,7 +317,7 @@ namespace SeriesCopy
 
         private void selectQuality_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _compress_qualiry = Convert.ToInt64(selectQuality.SelectedItem.ToString());
+            _compress_qualiry = Convert.ToInt32(selectQuality.SelectedItem.ToString());
         }
     }
 }

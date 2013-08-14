@@ -63,8 +63,8 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Noesis.Drawing.Imaging.WebP">
-      <HintPath>..\External\WebPForDotNet-v0.3-Binaries\Noesis.Drawing.Imaging.WebP.dll</HintPath>
+    <Reference Include="Magick.NET-x86">
+      <HintPath>..\External\ImageMagick.net\Magick.NET-x86.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
