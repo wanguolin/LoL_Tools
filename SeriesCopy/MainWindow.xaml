@@ -9,6 +9,8 @@
                 <ComboBox Name="selectPath" Text=" 请选择要整理到的套图库 "  SelectionChanged="selectPath_changed"  IsReadOnly="True" IsEditable="true" DockPanel.Dock="Left" Drop="selectPath_Drop" DropDownOpened="selectPath_DropDownOpened"></ComboBox>
                
                 <ComboBox Name="selectQuality" Text="请选择压缩比" IsReadOnly="True" IsEditable="true" DockPanel.Dock="Right" SelectionChanged="selectQuality_SelectionChanged"></ComboBox>
+                <ComboBox Name="selectResize" Text="请选择等比缩放" IsReadOnly="True" IsEditable="true" DockPanel.Dock="Right" SelectionChanged="selectResize_SelectionChanged"></ComboBox>
+
                 <ComboBox Name="selectOutputType" Text="请选择要输出的文件类型"   IsReadOnly="True" IsEditable="true" DockPanel.Dock="Right" SelectionChanged="selectOutputType_SelectionChanged"></ComboBox>
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">

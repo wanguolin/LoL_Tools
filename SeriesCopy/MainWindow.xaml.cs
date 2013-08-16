@@ -36,7 +36,7 @@ namespace SeriesCopy
         string _str_site_name = "";
         string _output_type = "";
         int _compress_qualiry = 0;
-
+        int _resize_rate = 100;
         HashSet<string> _set_log_in_dest_dir = new HashSet<string>();
         List<string> _lst_all_path_from = new List<string>();
         List<string> _lst_all_path_to = new List<string>();
@@ -123,6 +123,7 @@ namespace SeriesCopy
        
         private void DoCopy()
         {
+            
             if ( _compress_qualiry == 0 || _output_type == "")
             {
                 AppendLog("请选择输出文件信息或是压缩质量");
@@ -133,41 +134,36 @@ namespace SeriesCopy
             foreach (string strCreateDir in _lst_all_path_to)
                 Directory.CreateDirectory(strCreateDir);
             AppendLog("创建完毕，开始拷贝");
-            SetProgressMaxInThread(_lst_all_path_to.Count);
-
+            SetProgressMaxInThread(_lst_all_path_from.Count);
+            this.Dispatcher.Invoke(new Action(() => { btnStartCopy.IsEnabled = false; btnStartScan.IsEnabled = false; }));
             for (int i = 0; i < _lst_all_path_from.Count; ++i )
             {
                 int nPicCount = 0;
                 long lPicTotalSize = 0;
-                foreach ( string strFileName in Directory.GetFiles(_lst_all_path_from[i]))
+                foreach (string strFileName in Directory.GetFiles(_lst_all_path_from[i]))
                 {
                     if (ChkIsPicVaild(strFileName))
                     {
                         try
                         {
+                            string strCopyTo = "";
                             FileInfo di = new FileInfo(strFileName);
                             if ( _output_type == _type_jpeg)
                             {
-                                File.Copy(strFileName, _lst_all_path_to[i] + "\\" + di.Name);
+                                strCopyTo = _lst_all_path_to[i] + "\\" + di.Name;
+                                File.Copy(strFileName, strCopyTo);
                             }
                             else {
                                 using (MagickImage image = new MagickImage(strFileName))
                                 {
+                                    strCopyTo = _lst_all_path_to[i] + "\\" + di.Name.Replace(di.Extension, ".webp");
                                     image.Quality = _compress_qualiry;
-                                    image.Write(_lst_all_path_to[i] + "\\" + di.Name.Replace(di.Extension, ".webp"));
+                                    image.Resize(new Percentage(_resize_rate));
+                                    image.Write(strCopyTo);
                                 }
-
-//                                 using (System.Drawing.Image image = System.Drawing.Image.FromFile(strFileName))
-//                                 {
-//                                     Bitmap bitmap = new Bitmap(image);
-//                                     WebPFormat.SaveToFile(_lst_all_path_to[i] + "\\" + di.Name.Replace(di.Extension, ".webp"), bitmap);
-//                                     bitmap.Dispose();
-//                                     
-//                                 }
                             }
-                           
                             nPicCount++;
-                            lPicTotalSize += di.Length;
+                            lPicTotalSize += (new FileInfo(strCopyTo)).Length;
                         }
                         catch (System.Exception ex)
                         {
@@ -188,7 +184,8 @@ namespace SeriesCopy
                 }
                 string[] split = _lst_all_path_to[i].Split('\\');
                 string strLastPathName = split[split.Length - 1];
-                string strRenameTo = _lst_all_path_to[i].Replace(strLastPathName, (_set_log_in_dest_dir.Count + i).ToString() + "_PIC[" + nPicCount.ToString() + "]_" + (lPicTotalSize / 1024 / 1024).ToString() + "M");
+                long lSizeInMB = (lPicTotalSize / 1024 / 1024 == 0 ) ? 1 : (lPicTotalSize / 1024 / 1024);
+                string strRenameTo = _lst_all_path_to[i].Replace(strLastPathName, (_set_log_in_dest_dir.Count + i).ToString() + "_" + nPicCount.ToString() + "P_" + lSizeInMB.ToString() + "M");
                 try
                 {
                     Directory.Move(_lst_all_path_to[i], strRenameTo);
@@ -199,9 +196,11 @@ namespace SeriesCopy
                     AppendLog("移动目录失败." + _lst_all_path_to[i] + " " + ex.Message);
                 }
                 File.WriteAllText(strRenameTo + "\\" + _str_logfile_in_dest_dir, _lst_all_path_from[i].Replace(_str_path_from, "") + "\n" + _compress_qualiry.ToString() + "%");
-                SetProgressCurrentInThread(i);
+                SetProgressCurrentInThread(i + 1);
             }
-
+            AppendLog("处理完毕，一共:" + _lst_all_path_from.Count.ToString() + "个目录");
+            ShowTheLastLog();
+            this.Dispatcher.Invoke(new Action(() => { btnStartCopy.IsEnabled = false; btnStartScan.IsEnabled = false; }));
         }
 
         private bool ChkIsPicVaild(string strFileName)
@@ -286,8 +285,11 @@ namespace SeriesCopy
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            for (int i = 5; i < 95; i+=5  )
+            for (int i = 5; i <= 100; i += 5)
+            {
                 selectQuality.Items.Add(i.ToString());
+                selectResize.Items.Add(i.ToString());
+            }
             selectOutputType.Items.Add(_type_jpeg);
             selectOutputType.Items.Add(_type_webp);
              
@@ -318,6 +320,11 @@ namespace SeriesCopy
         private void selectQuality_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _compress_qualiry = Convert.ToInt32(selectQuality.SelectedItem.ToString());
+        }
+
+        private void selectResize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _resize_rate = Convert.ToInt32(selectResize.SelectedItem.ToString());
         }
     }
 }

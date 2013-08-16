@@ -238,8 +238,11 @@ namespace DBMaker
                     foreach (string PicFullPath in Directory.GetFiles(SeriesFullPath))
                     {
                         DirectoryInfo picFileInfo = new DirectoryInfo(PicFullPath);
-                        seriesInfo.picInSeries.Add(new _Pic(picFileInfo.Name, ""));
-                        _total_compressed_file_count++;
+                        if (picFileInfo.Extension.ToLower() == ".webp")
+                        {
+                            seriesInfo.picInSeries.Add(new _Pic(picFileInfo.Name, ""));
+                            _total_compressed_file_count++;
+                        }
                     }
                     seriesInfo.mainPage = seriesInfo.picInSeries[0];
                     siteInfo.seriesInSite.Add(seriesInfo);
