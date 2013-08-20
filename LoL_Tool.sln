@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QBox", "External\csharp-sdk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeriesCopy", "SeriesCopy\SeriesCopy.csproj", "{70D61E75-7801-4938-A5EC-F3976C051C03}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeriesEditor", "SeriesEditor\SeriesEditor.csproj", "{341630E6-86DB-47A0-823B-4F55AEF1C2F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,16 @@ Global
 		{70D61E75-7801-4938-A5EC-F3976C051C03}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{70D61E75-7801-4938-A5EC-F3976C051C03}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{70D61E75-7801-4938-A5EC-F3976C051C03}.Release|x86.ActiveCfg = Release|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{341630E6-86DB-47A0-823B-4F55AEF1C2F7}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
