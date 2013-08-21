@@ -98,7 +98,7 @@ namespace SeriesEditor
         private async void GetSeries(string strSeriesName)
         {
             string strSiteName = selectSite.SelectedItem.ToString();
-            int nSiteCount = getSiteCount(strSiteName);
+            int nSiteCount = GetCountFromList(strSiteName, _lst_site_json);
             HttpClient hc = new HttpClient();
             for (int i = 2; i * _series__factor < nSiteCount; ++i)
             {
@@ -115,7 +115,8 @@ namespace SeriesEditor
                 List<_FolderJSON> lstSeries = JsonConvert.DeserializeObject<List<_FolderJSON>>(json);
                 _lst_series_json.AddRange(lstSeries);
             }
-
+            foreach (_FolderJSON f in _lst_series_json)
+                selectSeries.Items.Add(f.Name);
         }
 
         private void selectSeries_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -123,9 +124,9 @@ namespace SeriesEditor
             
         }
 
-        private int getSiteCount(string siteName)
+        private int GetCountFromList(string siteName, List<_FolderJSON> lstSearchFrom)
         {
-            foreach (_FolderJSON n in _lst_site_json)
+            foreach (_FolderJSON n in lstSearchFrom)
                 if (n.Name == siteName)
                     return n.Count;
             return 0;
