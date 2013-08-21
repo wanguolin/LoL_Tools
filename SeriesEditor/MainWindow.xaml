@@ -6,10 +6,10 @@
         <DockPanel>
             <DockPanel DockPanel.Dock="Top">
                 
-                <ComboBox Name="selectSite" Text="要处理的大套" IsReadOnly="True" IsEditable="true" DockPanel.Dock="Left"></ComboBox>
+                <ComboBox Name="selectSite" Text="要处理的大套" IsReadOnly="True" IsEditable="true" DockPanel.Dock="Left" SelectionChanged="selectSite_SelectionChanged"></ComboBox>
                 <Button Name="btnCheckOut" Content="CheckOut"  ></Button>
                 <Button Name="btnCheckIn" Content="CheckIn"></Button>
-                <ComboBox Name="selectSeries" Text="要处理的套图名称" IsReadOnly="True" IsEditable="true" DockPanel.Dock="Left"></ComboBox>
+                <ComboBox Name="selectSeries" Text="要处理的套图名称" IsReadOnly="True" IsEditable="true" DockPanel.Dock="Left" SelectionChanged="selectSeries_SelectionChanged"></ComboBox>
                 <Button Name="btnDeleteSeries" Content="整套删除"></Button>
 
 

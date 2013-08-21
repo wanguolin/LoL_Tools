@@ -236,7 +236,7 @@ namespace SeriesCopy
         {
             string[] arrDir = Directory.GetDirectories(strDirName);
 
-            if (arrDir.Length == 0 && IsCopySrcDir(strDirName) && ChkLogIfCopied(strDirName) == false)
+            if (IsCopySrcDir(strDirName) && ChkLogIfCopied(strDirName) == false)
                 _lst_all_path_from.Add(strDirName);
             else
                 AppendLog(strDirName + "图片太少，或是根据配置文件记录，已经被处理过，不予以拷贝");
