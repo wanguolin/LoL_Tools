@@ -11,6 +11,7 @@
                 <Button Name="btnCheckIn" Content="CheckIn"></Button>
                 <ComboBox Name="selectSeries" Text="要处理的套图名称" IsReadOnly="True" IsEditable="true" DockPanel.Dock="Left" SelectionChanged="selectSeries_SelectionChanged"></ComboBox>
                 <Button Name="btnDeleteSeries" Content="整套删除"></Button>
+                <Button Name="btnClearLog" Content="清除日志" Click="btnClearLog_Click"></Button>
 
 
             </DockPanel>

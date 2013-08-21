@@ -1,4 +1,4 @@
-﻿using ImageMagick;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,6 +31,7 @@ namespace SeriesEditor
         const string _site_json = "all_site.json";
         const string _qiniu_url_all_site = _qiniu_url + _site_json;
         const int _series__factor = 18;
+        const string _qiniu_image_processing = "?imageView/2/w/200/quality/30";
         //generate json for server
 
         class ALL_SITE
@@ -38,7 +39,12 @@ namespace SeriesEditor
             public List<_FolderJSON> siteAll = new List<_FolderJSON>();
         };
 
-       
+        public class _Pic
+        {
+            public _Pic(string strPicName, string strMD5) { picName = strPicName; picMD5 = strMD5; }
+            public string picName;
+            public string picMD5;
+        }
 
         class _FolderJSON
         {
@@ -50,33 +56,17 @@ namespace SeriesEditor
        
         static List<_FolderJSON> _lst_site_json = null;//new List<_FolderJSON>();
         static List<_FolderJSON> _lst_series_json = new List<_FolderJSON>();
+        static List<_Pic> _lst_pic_json = new List<_Pic>();
         static List<BitmapImage> _lst_bitmap = new List<BitmapImage>();
+        
 
         public MainWindow()
         {
             InitializeComponent();
             txtLog.AppendText("正在获取站点信息...\n");
             GetSite();
-            
-            try
-            {
-                List<System.Windows.Controls.Image> imagelist = new List<System.Windows.Controls.Image>();
-                for (int i = 0; i < 10; i++)
-                {
-                    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                    image.Source = new BitmapImage(new Uri("http://picturelol.qiniudn.com/0000c4e85588f4ea6d2665ff3db7c602.jpg"));
-                    imagelist.Add(image);
-                }
-                lvPictures.ItemsSource = imagelist;
-
-            }
-            catch (Exception ex)
-            {
-                //Debug.WriteLine(ex.Message);
-            }
-
-
-            //lvPictures.ItemsSource = 
+             
+           
         }
 
         private void AddLogInThread(string l)
@@ -95,8 +85,29 @@ namespace SeriesEditor
             hc.Dispose();
         }
 
+        private async void GetPic(string pic_json_file)
+        {
+
+            List<System.Windows.Controls.Image> imagelist = new List<System.Windows.Controls.Image>();
+            HttpClient hc = new HttpClient();
+            string json = await hc.GetStringAsync(pic_json_file);
+            List<_Pic> lstPic = JsonConvert.DeserializeObject<List<_Pic>>(json);
+
+            foreach ( _Pic p in lstPic)
+            {
+                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+                image.Source = new BitmapImage(new Uri(_qiniu_url + p.picMD5 + _qiniu_image_processing));
+                imagelist.Add(image);
+            }
+            lvPictures.ItemsSource = imagelist;
+            lvPictures.Items.Refresh();
+
+            hc.Dispose();
+        }
+
         private async void GetSeries(string strSeriesName)
         {
+            _lst_series_json.Clear();
             string strSiteName = selectSite.SelectedItem.ToString();
             int nSiteCount = GetCountFromList(strSiteName, _lst_site_json);
             HttpClient hc = new HttpClient();
@@ -110,7 +121,7 @@ namespace SeriesEditor
             }
             if (nSiteCount % _series__factor != 0)
             {
-                string url = strSeriesName + "_" + nSiteCount.ToString() + ".json";
+                string url = _qiniu_url + strSeriesName + "_" + nSiteCount.ToString() + ".json";
                 string json = await hc.GetStringAsync(url);
                 List<_FolderJSON> lstSeries = JsonConvert.DeserializeObject<List<_FolderJSON>>(json);
                 _lst_series_json.AddRange(lstSeries);
@@ -121,7 +132,10 @@ namespace SeriesEditor
 
         private void selectSeries_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            
+            string url = selectSite.SelectedItem.ToString() + "_" + (selectSeries.SelectedIndex + 1).ToString() + "_pic.json";
+            AddLogInThread(url);
+            GetPic(_qiniu_url + url);
+
         }
 
         private int GetCountFromList(string siteName, List<_FolderJSON> lstSearchFrom)
@@ -135,6 +149,11 @@ namespace SeriesEditor
         private void selectSite_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             GetSeries(selectSite.SelectedItem.ToString());
+        }
+
+        private void btnClearLog_Click(object sender, RoutedEventArgs e)
+        {
+            txtLog.Clear();
         }
 
     }
